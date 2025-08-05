@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordenando Valores</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #fff;
+            margin: 0;
+            padding: 25px;
+        }
+
+        .content-wrapper {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 300; 
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #000;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input[type="number"], select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #c9c9c9;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background-color: #0d6efd;
+            color: white;
+            cursor: pointer;
+            border-color: #0d6efd;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-buttons button {
+            margin-bottom: 0;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 25px;
+        }
+
+        ul li {
+            padding: 3px 0;
+            font-size: 14px;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-wrapper">
+        <h1>Ordenando Valores</h1>
+        <label for="valor">Valor</label>
+        <input type="number" id="valor">
+        <button onclick="add()">Adicionar</button>
+        <select id="algoritmo">
+            <option value="bubble" selected>Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="quick">Quick Sort</option>
+        </select>
+        <div class="action-buttons">
+            <button onclick="ordenar()">Ordenar</button>
+            <button onclick="misturar()">Misturar</button>
+        </div>
+        <ul id="valores">
+
+        </ul>
+    </div>
+    <script src="ordenando.js"></script>
+    <script>
+        let numeros = [];
+
+        function add() {
+            const valorInput = document.getElementById('valor');
+            const valorTexto = valorInput.value;
+            const valorNumerico = parseInt(valorTexto);
+
+            if (!isNaN(valorNumerico)) {
+                numeros.push(valorNumerico);
+                const listaUI = document.getElementById('valores');
+                const node = document.createElement('li');
+                const textNode = document.createTextNode(valorTexto);
+                node.appendChild(textNode);
+                listaUI.appendChild(node);
+            }
+            
+            valorInput.value = '';
+            valorInput.focus();
+        }
+
+        function ordenar() {
+            const listaUI = document.getElementById('valores');
+            const algoritmoSelect = document.getElementById('algoritmo');
+            const itensDaLista = listaUI.children;
+
+            if (itensDaLista.length < 2) return;
+
+            let valoresParaOrdenar = [];
+            for (let i = 0; i < itensDaLista.length; i++) {
+                const conteudo = itensDaLista[i].innerHTML;
+                const numero = eval(conteudo);
+                if (!isNaN(numero)) {
+                    valoresParaOrdenar.push(numero);
+                }
+            }
+
+            const indiceSelecionado = algoritmoSelect.selectedIndex;
+            switch (indiceSelecionado) {
+                case 0: bubble_sort(valoresParaOrdenar); break;
+                case 1: selection_sort(valoresParaOrdenar); break;
+                case 2: quick_sort(valoresParaOrdenar, 0, valoresParaOrdenar.length - 1); break;
+            }
+            
+            numeros = valoresParaOrdenar;
+
+            const novosItensHTML = valoresParaOrdenar.map(n => `<li>${n}</li>`);
+            const listaCompletaHTML = novosItensHTML.reduce((acc, item) => acc + item, '');
+            
+            listaUI.innerHTML = listaCompletaHTML;
+        }
+
+        function misturar() {
+            const listaUI = document.getElementById('valores');
+            const itensDaLista = listaUI.children;
+            if (itensDaLista.length < 2) return;
+
+            let valoresParaMisturar = [];
+            for (let i = 0; i < itensDaLista.length; i++) {
+                const conteudo = itensDaLista[i].innerHTML;
+                const numero = eval(conteudo);
+                if (!isNaN(numero)) {
+                    valoresParaMisturar.push(numero);
+                }
+            }
+
+            shuffle(valoresParaMisturar, valoresParaMisturar.length);
+            
+            numeros = valoresParaMisturar;
+
+            const novosItensHTML = valoresParaMisturar.map(n => `<li>${n}</li>`);
+            const listaCompletaHTML = novosItensHTML.reduce((acc, item) => acc + item, '');
+            
+            listaUI.innerHTML = listaCompletaHTML;
+        }
+    </script>
+</body>
+</html>
